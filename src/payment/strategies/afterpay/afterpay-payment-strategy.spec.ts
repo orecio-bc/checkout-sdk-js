@@ -129,6 +129,27 @@ describe('AfterpayPaymentStrategy', () => {
 
             expect(scriptLoader.load).toHaveBeenCalledWith(paymentMethod, 'US');
         });
+
+        it('loads script when initializing strategy with NZD', async () => {
+            store = createCheckoutStore(merge(
+                getCheckoutStoreState(),
+                { config: { data: { storeConfig: { shopperCurrency: {code: 'NZD' } } } } }
+            ));
+
+            strategy = new AfterpayPaymentStrategy(
+                store,
+                checkoutValidator,
+                orderActionCreator,
+                paymentActionCreator,
+                paymentMethodActionCreator,
+                storeCreditActionCreator,
+                scriptLoader
+            );
+
+            await strategy.initialize({ methodId: paymentMethod.id, gatewayId: paymentMethod.gateway });
+
+            expect(scriptLoader.load).toHaveBeenCalledWith(paymentMethod, 'NZ');
+        });
     });
 
     describe('#execute()', () => {
